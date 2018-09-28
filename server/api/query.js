@@ -12,13 +12,19 @@ module.exports = {
                 cipher_text TEXT,
                 type TEXT
             ) 
-            `
+            `,
+      [],
+      err => {
+        if (err) {
+          console.error(err.message);
+        }
+      }
     );
   },
   all() {
     const query = `SELECT * FROM user_data`;
     let results;
-    db.run(query, [], (err, rows) => {
+    db.all(query, [], (err, rows) => {
       if (err) {
         console.error(err.message);
       }
@@ -29,7 +35,7 @@ module.exports = {
   one(id) {
     const query = `SELECT * FROM user_data WHERE id = ${id}`;
     let result;
-    db.run(query, [], (err, row) => {
+    db.get(query, [], (err, row) => {
       if (err) {
         console.error(err.message);
       }
@@ -38,15 +44,24 @@ module.exports = {
     return result;
   },
   insert(plain_text, cipher_text, type) {
-    const query = `INSERT INTO user_data VALUES(?, ?, ?)`;
+    const query = `INSERT INTO user_data(plain_text, cipher_text, type) VALUES(?, ?, ?)`;
     let lastId;
     db.run(query, [plain_text, cipher_text, type], err => {
       if (err) {
         console.error(err.message);
       }
-      lastId = this.lastId;
     });
     return lastId;
+  },
+  getLastId() {
+    const query = `SELECT MAX(id) FROM user_data`;
+    db.get(query, [], (err, id) => {
+      if (err) {
+        console.error(err.message);
+      } else {
+        return id;
+      }
+    });
   },
   close() {
     db.disconnect();

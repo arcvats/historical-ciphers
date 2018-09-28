@@ -14,23 +14,25 @@ module.exports = {
     switch (type) {
       case "CAESAR":
         data = crypto.caesar(text, CAESAR_SHIFT).join("");
-        lastId = query.insert(text.join(""), data, type);
+        query.insert(text.join(""), data, type);
         break;
       case "SHIFT":
         data = crypto.shift(text, shift).join("");
-        lastId = query.insert(text.join(""), data, type);
+        query.insert(text.join(""), data, type);
         break;
       case "MONO":
         data = crypto.monoalphabetic(text, key).join("");
-        lastId = query.insert(text.join(""), data, type);
+        query.insert(text.join(""), data, type);
         break;
       case "VIGE":
         data = crypto.vigenere(text, key).join("");
-        lastId = query.insert(text.join(""), data, type);
+        query.insert(text.join(""), data, type);
         break;
       default:
         return res.send({ success: false });
     }
+    lastId = query.getLastId();
+    console.log(data, lastId);
     if (data && lastId) {
       return res.send({ data, lastId, success: true });
     }

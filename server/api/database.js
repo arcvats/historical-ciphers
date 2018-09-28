@@ -8,16 +8,13 @@ module.exports = {
     return this.db;
   },
   initDB() {
-    this.db = new sqlite3.Database(
-      "./ciphers.db",
-      sqlite3.OPEN_READWRITE,
-      err => {
-        if (err) {
-          console.error(err.message);
-        }
+    this.db = new sqlite3.Database("./ciphers.db", err => {
+      if (err) {
+        console.error(err.message);
+      } else {
         console.log("Connected to the database");
       }
-    );
+    });
   },
   disconnect() {
     if (this.db) {
