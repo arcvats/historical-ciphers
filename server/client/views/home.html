@@ -1,0 +1,75 @@
+<div class="tile is-ancestor">
+    <div class="tile is-4 is-vertical is-parent">
+        <div class="tile is-child box">
+            <p class="title">Encrypt</p>
+            <div class="field">
+                <label class="label">Ecnryption Scheme</label>
+                <div class="control">
+                    <div class="select is-fullwidth">
+                        <select class="is-info" ng-model="HomeCtrl.type" ng-options="x for (x,y) in HomeCtrl.typeNames"
+                            ng-change="HomeCtrl.typeSelected()">
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button class="button is-success is-outlined is-fullwidth">Fetch Last Saved</button>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Enter Plaintext</label>
+                <div class="control">
+                    <input class="input is-info" type="text" placeholder="Enter text" value="" required>
+                </div>
+                <p class="help is-danger">This username is available</p>
+            </div>
+            <div class="field">
+                <label class="label">Enter Shift</label>
+                <div class="control">
+                    <input ng-disabled="!HomeCtrl.isShiftEnabled" class="input is-info" type="text" placeholder="Enter a number"
+                        value="">
+                </div>
+                <p class="help is-danger">This username is available</p>
+            </div>
+            <div class="field">
+                <label class="label">Enter Key</label>
+                <div class="control">
+                    <input ng-disabled="!HomeCtrl.isKeyEnabled" class="input is-info" type="text" placeholder="Enter a key"
+                        value="">
+                </div>
+                <p class="help is-danger">This username is available</p>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button class="button is-success is-outlined is-fullwidth">Encrypt & Save</button>
+                </div>
+            </div>
+        </div>
+        <div class="tile is-child box">
+            <p class="title">Two</p>
+        </div>
+    </div>
+    <div class="tile is-parent">
+        <div class="tile is-child box">
+            <p class="title">Brute Force Attack</p>
+            <div class="field">
+                <label class="label">Enter Cipher Text</label>
+                <div class="control">
+                    <input class="input is-info" type="text" placeholder="Enter a cipher text" ng-model="HomeCtrl.cipher"
+                        ng-maxlength="32">
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <button ng-disabled="!HomeCtrl.cipher" class="button is-success is-outlined is-fullwidth" ng-click="HomeCtrl.attack()">Attack</button>
+                </div>
+            </div>
+            <div>
+                <ol>
+                    <li ng-repeat="item in HomeCtrl.attackResults">{{item}}</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>

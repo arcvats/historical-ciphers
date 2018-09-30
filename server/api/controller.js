@@ -49,5 +49,12 @@ module.exports = {
     const data = query.one(lastId);
     res.send({ data, success: true });
   },
-  attack(req, res) {}
+  attack(req, res) {
+    const cipher = req.body.cipher;
+    const result = crypto.attack(cipher);
+    if (result.status) {
+      return res.send({ data: result.data, success: true });
+    }
+    return res.send({ success: false });
+  }
 };
