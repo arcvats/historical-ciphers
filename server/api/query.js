@@ -1,9 +1,8 @@
 const database = require("./database");
-let db;
+const db = database.getDB();
 
 module.exports = {
   init() {
-    db = database.getDB();
     db.run(
       `
             CREATE TABLE IF NOT EXISTS user_data(
@@ -23,25 +22,25 @@ module.exports = {
   },
   all() {
     const query = `SELECT * FROM user_data`;
-    let results;
-    db.all(query, [], (err, rows) => {
-      if (err) {
-        console.error(err.message);
-      }
-      results = rows;
+    return new Promise((resolve, reject) => {
+      db.all(query, [], (err, rows) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(rows);
+      });
     });
-    return results;
   },
   one(id) {
     const query = `SELECT * FROM user_data WHERE id = ${id}`;
-    let result;
-    db.get(query, [], (err, row) => {
-      if (err) {
-        console.error(err.message);
-      }
-      result = row;
+    return new Promise((resolve, reject) => {
+      db.get(query, [], (err, row) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(row);
+      });
     });
-    return result;
   },
   insert(plain_text, cipher_text, type) {
     const query = `INSERT INTO user_data(plain_text, cipher_text, type) VALUES(?, ?, ?)`;
@@ -54,13 +53,27 @@ module.exports = {
     return lastId;
   },
   getLastId() {
-    const query = `SELECT MAX(id) FROM user_data`;
-    db.get(query, [], (err, id) => {
-      if (err) {
-        console.error(err.message);
-      } else {
-        return id;
-      }
+    const query = `SELECT MAX(id) AS id FROM user_data`;
+    return new Promise((resolve, reject) => {
+      db.get(query, [], (err, id) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(id);
+        }
+      });
+    });
+  },
+  getLastByCipher(cipher) {
+    const query = `SELECT * FROM user_data WHERE type = "${cipher}" ORDER BY id DESC LIMIT 1`;
+    return new Promise((resolve, reject) => {
+      db.get(query, [], (err, row) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
     });
   },
   close() {

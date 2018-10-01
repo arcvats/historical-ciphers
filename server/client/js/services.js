@@ -12,11 +12,17 @@
       "$http",
       function($http) {
         return {
-          encrypt: function() {
+          encrypt: function(data) {
             return $http.post("/encrypt", data);
           },
           attack: function(data) {
             return $http.post("/bruteforce", data);
+          },
+          getRecentlySaved: function() {
+            return $http.get("/last");
+          },
+          getLastByCipher: function(data) {
+            return $http.post("/last-cipher", data);
           }
         };
       }

@@ -43,7 +43,14 @@ module.exports = {
   shift(text, shift) {
     const cipher = text.map(alpha => {
       if (isAlphabet(alpha)) {
-        return String.fromCharCode(alpha.charCodeAt() + shift);
+        const charCode = alpha.charCodeAt();
+        if (isLower(alpha) && charCode + shift > 122) {
+          return String.fromCharCode(97 + charCode + shift - 123);
+        } else if (isUpper(alpha) && charCode + shift > 90) {
+          return String.fromCharCode(65 + charCode + shift - 91);
+        } else {
+          return String.fromCharCode(charCode + shift);
+        }
       }
       return alpha;
     });
@@ -52,8 +59,10 @@ module.exports = {
   monoalphabetic(text, key) {
     const keyMap = getKeyMap(key);
     const cipher = text.map(alpha => {
-      if (isAlphabet(alpha)) {
+      if (isLower(alpha)) {
         return keyMap[alpha];
+      } else if (isUpper(alpha)) {
+        return keyMap[alpha.toLowerCase()].toUpperCase();
       }
       return alpha;
     });
@@ -68,9 +77,32 @@ module.exports = {
         key = key.slice(0, text.length % 26);
       }
       if (isAlphabet(alpha)) {
-        return String.fromCharCode(
-          alpha.charCodeAt() + key[index % key.length].charCodeAt()
-        );
+        const charCode = alpha.charCodeAt();
+        if (
+          isLower(alpha) &&
+          charCode + key[index % key.length].charCodeAt() - 97 > 122
+        ) {
+          return String.fromCharCode(
+            charCode + key[index % key.length].charCodeAt() - 123
+          );
+        } else if (
+          isUpper(alpha) &&
+          charCode + key[index % key.length].charCodeAt() - 65 > 90
+        ) {
+          return String.fromCharCode(
+            charCode + key[index % key.length].charCodeAt() - 91
+          );
+        } else {
+          if (isLower(alpha)) {
+            return String.fromCharCode(
+              charCode + key[index % key.length].charCodeAt() - 97
+            );
+          } else {
+            return String.fromCharCode(
+              charCode + key[index % key.length].charCodeAt() - 65
+            );
+          }
+        }
       }
       return alpha;
     });

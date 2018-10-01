@@ -14,40 +14,68 @@
             </div>
             <div class="field">
                 <div class="control">
-                    <button class="button is-success is-outlined is-fullwidth">Fetch Last Saved</button>
+                    <button ng-disabled="!HomeCtrl.type" class="button is-success is-outlined is-fullwidth" ng-click="HomeCtrl.getLastByCipher()">Fetch
+                        Last by Cipher</button>
+                </div>
+            </div>
+            <h4 style="text-align:center;">-OR-</h4>
+            <div class="field">
+                <div class="control">
+                    <button class="button is-success is-outlined is-fullwidth" ng-click="HomeCtrl.getRecentlySaved()">Most
+                        Recently Saved</button>
                 </div>
             </div>
             <div class="field">
                 <label class="label">Enter Plaintext</label>
                 <div class="control">
-                    <input class="input is-info" type="text" placeholder="Enter text" value="" required>
+                    <input ng-disabled="!HomeCtrl.type" ng-model="HomeCtrl.plainText" class="input is-info" type="text"
+                        placeholder="Enter text" value="" required>
                 </div>
                 <p class="help is-danger">This username is available</p>
             </div>
             <div class="field">
                 <label class="label">Enter Shift</label>
                 <div class="control">
-                    <input ng-disabled="!HomeCtrl.isShiftEnabled" class="input is-info" type="text" placeholder="Enter a number"
-                        value="">
+                    <input ng-model="HomeCtrl.shift" ng-disabled="!HomeCtrl.isShiftEnabled" class="input is-info" type="text"
+                        placeholder="Enter a number" value="" ng-pattern="/^\d+$/">
                 </div>
-                <p class="help is-danger">This username is available</p>
+                <p class="help is-danger">Enter only numbers.</p>
             </div>
             <div class="field">
                 <label class="label">Enter Key</label>
                 <div class="control">
-                    <input ng-disabled="!HomeCtrl.isKeyEnabled" class="input is-info" type="text" placeholder="Enter a key"
-                        value="">
+                    <input ng-model="HomeCtrl.key" ng-disabled="!HomeCtrl.isKeyEnabled" class="input is-info" type="text"
+                        placeholder="Enter a key" value="" ng-blur="HomeCtrl.fillForMono()" ng-pattern="/^[A-Za-z]+$/">
                 </div>
-                <p class="help is-danger">This username is available</p>
+                <p class="help is-danger">Enter key, in case of mono enter partial and it will be completed.</p>
             </div>
             <div class="field">
                 <div class="control">
-                    <button class="button is-success is-outlined is-fullwidth">Encrypt & Save</button>
+                    <button ng-disabled="!HomeCtrl.isSaveEnabled" class="button is-success is-outlined is-fullwidth"
+                        ng-click="HomeCtrl.encrypt()">Encrypt & Save</button>
                 </div>
+            </div>
+            <div class="notification is-warning" ng-show="HomeCtrl.toast">
+                <button class="delete" ng-click="HomeCtrl.hideToast()"></button>
+                {{HomeCtrl.toast}}
             </div>
         </div>
         <div class="tile is-child box">
-            <p class="title">Two</p>
+            <p class="title">See Results</p>
+            <table ng-show="HomeCtrl.result" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                <tr>
+                    <th>No.</th>
+                    <th>Plain Text</th>
+                    <th>Encrypted Text</th>
+                    <th>Type</th>
+                </tr>
+                <tr>
+                    <td>{{HomeCtrl.result.id}}</td>
+                    <td>{{HomeCtrl.result.plain_text}}</td>
+                    <td>{{HomeCtrl.result.cipher_text}}</td>
+                    <td>{{HomeCtrl.result.type}}</td>
+                </tr>
+            </table>
         </div>
     </div>
     <div class="tile is-parent">
@@ -65,11 +93,16 @@
                     <button ng-disabled="!HomeCtrl.cipher" class="button is-success is-outlined is-fullwidth" ng-click="HomeCtrl.attack()">Attack</button>
                 </div>
             </div>
-            <div>
-                <ol>
-                    <li ng-repeat="item in HomeCtrl.attackResults">{{item}}</li>
-                </ol>
-            </div>
+            <table ng-show="HomeCtrl.attackResults" class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth">
+                <tr>
+                    <th>No.</th>
+                    <th>Result</th>
+                </tr>
+                <tr ng-repeat="(index,item) in HomeCtrl.attackResults">
+                    <td>{{index+1}}</td>
+                    <td>{{item}}</td>
+                </tr>
         </div>
     </div>
+</div>
 </div>

@@ -6,11 +6,10 @@ module.exports = {
   encrypt(req, res) {
     const type = req.body.type;
     const text = req.body.plainText.split("");
-    const shift = parseInt(req.body.shift, 10) % UPPER_BOUND || undefined;
+    const shift = parseInt(req.body.shift, 10) % UPPER_BOUND || 0;
     const key = req.body.key || null;
     query.init();
     let data;
-    let lastId;
     switch (type) {
       case "CAESAR":
         data = crypto.caesar(text, CAESAR_SHIFT).join("");
@@ -24,30 +23,57 @@ module.exports = {
         data = crypto.monoalphabetic(text, key).join("");
         query.insert(text.join(""), data, type);
         break;
-      case "VIGE":
+      case "VIGEN":
         data = crypto.vigenere(text, key).join("");
         query.insert(text.join(""), data, type);
         break;
       default:
         return res.send({ success: false });
     }
-    lastId = query.getLastId();
-    console.log(data, lastId);
-    if (data && lastId) {
-      return res.send({ data, lastId, success: true });
+    if (data) {
+      return res.send({ data, success: true });
     }
     return res.send({ success: false });
   },
   all(req, res) {
-    query.init();
-    const data = query.all();
-    res.send({ data, success: true });
+    query
+      .all()
+      .then(data => res.send({ data, success: true }))
+      .catch(err => {
+        console.error(err.message);
+        res.send({ success: false });
+      });
   },
   last(req, res) {
-    query.init();
-    const lastId = parseInt(req.body.lastId, 10);
-    const data = query.one(lastId);
-    res.send({ data, success: true });
+    query
+      .getLastId()
+      .then(result => {
+        query
+          .one(result.id)
+          .then(data => {
+            return res.send({ data, success: true });
+          })
+          .catch(err => {
+            console.error(err.message);
+            return res.send({ success: false });
+          });
+      })
+      .catch(err => {
+        console.error(err.message);
+        return res.send({ success: false });
+      });
+  },
+  lastByCipher(req, res) {
+    const cipher = req.body.cipher;
+    query
+      .getLastByCipher(cipher)
+      .then(data => {
+        return res.send({ data, success: true });
+      })
+      .catch(err => {
+        console.error(err.message);
+        return res.send({ success: false });
+      });
   },
   attack(req, res) {
     const cipher = req.body.cipher;
